@@ -1,10 +1,9 @@
-// 1. import (opcional con vite)
 import { useEffect, useState } from "react"
+import useGlobalReducer from "../hooks/useGlobalReducer";
 
 
-// 5 y 2
 export const SimpleCounter = () => {
-  // 3 Code JS (opcional)
+  const { dispatch } = useGlobalReducer();
   const [ counter, setCounter ] = useState(0);
   const [ isRunning, setIsRunnig] = useState(false);
   const [ textButton, setTextButton ] = useState('Start');
@@ -32,6 +31,14 @@ export const SimpleCounter = () => {
       color: 'danger',
       align: 'start'
     });
+    dispatch({
+      type: 'handle_alert',
+      payload: {
+        text: 'Cronometro iniciado',
+        background: 'success',
+        visible: true
+      }
+    })
   }
 
   const handleReset = () => {

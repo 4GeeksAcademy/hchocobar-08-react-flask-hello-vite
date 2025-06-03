@@ -1,16 +1,15 @@
-// 1. 
+import useGlobalReducer from "../hooks/useGlobalReducer"
 
-// 5 y 2
+
 export const Footer = () => {
-  // 3 Cocde JS
+  const { store } = useGlobalReducer()
 
-  // 4 Retornamos 1 HTML
   return (
     <div className="mt-auto">
       <hr />
       <p className="alert alert-secondary mb-0">
         Made with ❤️ by <a href="http://www.4geeksacademy.com">4Geeks Academy</a>
-        , Héctor y Álvaro para la cohorte Spain-{100 + 8}
+        , Héctor y Álvaro para la {store.cohorte}
       </p>
     </div>
   )

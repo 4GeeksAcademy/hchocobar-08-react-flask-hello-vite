@@ -1,5 +1,5 @@
-// 1
 import { useState } from "react";
+import useGlobalReducer from "../hooks/useGlobalReducer";
 
 /* Controlando Inputs */
 // 1. Debo declarar un 'estado' para cada input
@@ -10,6 +10,7 @@ import { useState } from "react";
 
 // 5 y 2
 export const Login = () => {
+  const { dispatch } = useGlobalReducer()
   const [ email, setEmail ]  = useState('');
   const [ password, setPassword ] = useState('');
   const [ checkMe, setCheckMe ] = useState(false);
@@ -29,12 +30,29 @@ export const Login = () => {
       imAgree: checkMe
     }
     console.log(dataToSend)
+    // suponemos que tuvo un login exitoso
+    dispatch({
+      type: 'handle_alert',
+      payload: {
+        text: 'Exclente! Bienvenido a nuestra App',
+        background: 'success',
+        visible: true
+      }
+    })
   }
 
   const handleReset = () => {
     setEmail('');
     setPassword('');
     setCheckMe(false);
+    dispatch({
+      type: 'handle_alert',
+      payload: {
+        text: 'Cronometro detenido',
+        background: 'danger',
+        visible: true
+      }
+    })
   }
 
   // 4

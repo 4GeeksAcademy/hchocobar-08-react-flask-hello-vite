@@ -1,14 +1,10 @@
-// 1.- Importamos todo lo necesario
+import useGlobalReducer from "../hooks/useGlobalReducer"
 
 
-// 5. y 2.- Exportar y Crear el componente
 export const Alert = () => {
-  // 3.- Codigo JS
-  const alertInfo = {
-    text: 'Soy el alert mas alertoso',
-    background: 'warning',
-    visible: false
-  }
+  const { store } = useGlobalReducer()
+
+  const alertInfo = store.alert
 
   // 4.- Retorno un solo elemento HTML
   return (

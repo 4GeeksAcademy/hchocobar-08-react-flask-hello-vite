@@ -2,13 +2,15 @@
 // 1.- Importamos todo lo necesario
 import { Link, useNavigate } from "react-router-dom";
 import { BtnCallActions } from "./BtnCallActions";
+import useGlobalReducer from "../hooks/useGlobalReducer";
 
 
 // 2.- Creo el componente (función)
 export const Navbar = () => {
+  const { store } = useGlobalReducer();
   const navigate = useNavigate()
-  // 3.- Codigo de JS
-  const cohorte = 'Spain 108';
+
+  const cohorte = store.cohorte;
 
   const handleOnSubmint = (event) => {
     event.preventDefault()
