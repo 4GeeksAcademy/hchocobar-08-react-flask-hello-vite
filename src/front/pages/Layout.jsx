@@ -7,10 +7,13 @@ import { Footer } from "../components/Footer.jsx"
 
 export const Layout = () => {
     return (
-        <ScrollToTop>
+        <div>
+            {/* <ScrollToTop> */}
             <Navbar />
                 <Outlet />
             <Footer />
-        </ScrollToTop>
+            {/* </ScrollToTop> */}
+
+        </div>
     )
 }

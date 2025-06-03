@@ -1,5 +1,25 @@
-/*
+/* Simple Counter Bonus*/
+.big-counter {
+    text-align: center;
+    background: black;
+}
 
-Estilos css globales para toda la app
+.big-counter div {
+    display: inline-block;
+    font-size: 60px;
+    background: #161B22;
+    border-radius: 5px;
+    color: white;
+    padding: 10px;
+    margin: 3px;
+}
 
-*/
+
+.hidden-icon > span {
+    visibility: hidden;
+}
+
+/* Muestra el icono cuando el cursor pase por encima del li */
+.hidden-icon:hover > span {
+    visibility: visible;
+}
