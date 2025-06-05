@@ -1,100 +1,43 @@
 import { useEffect, useState } from "react";
+import { getTodos, addTodo, modifyTodo, deleteTodo } from "../services/todos.js";
+import useGlobalReducer from '../hooks/useGlobalReducer.jsx'
 
 
 export const TodoListFetch = () => {
-  const host = 'https://playground.4geeks.com/todo';
-  const user = 'spain-108';
+  const { store, dispatch } = useGlobalReducer()
+  // const [ todos, setTodos ] = useState([]);
+  const todos = store.todos
+
+  useEffect(() => {
+    const get = async () => {
+      const data = await getTodos()
+      if (!data) {
+        console.log('error')
+        return
+      }
+      // grabar los datos en el store.todos mediante el dispatch 'getTodos'
+      dispatch({
+        type: 'getTodos',
+        payload: data
+      })
+    }
+
+    get();
+  }, [])
+
 
   const [ newTask, setNewTask ] = useState('');
   const [ editTask, setEditTask ] = useState('');
   const [ editCompleted, setEditCompleted ] = useState()
   const [ isEdit, setIsEdit ] = useState(false);
   const [ editTodo, setEditTodo ] = useState({})
-  const [ todos, setTodos ] = useState([]);
 
   const handleNewTask = event => setNewTask(event.target.value);
   const handleEditTask = event => setEditTask(event.target.value);
   const handleEditCompleted = event => setEditCompleted(event.target.checked);
   
-  
-  /* Fetchs: addUser() - getTodos() - addTodo() - modifyTodo() - deleteTodo() */
-  const addUser = async () => {
-    const uri = `${host}/users/${user}`
-    const options = {method: 'POST'}
-    const response = await fetch(uri, options )
-    getTodos()
-  }
-
-  const getTodos = async () => {
-    const uri = `${host}/users/${user}`
-    const options = {method: 'GET'}
-    try {
-      const response = await fetch(uri, options);
-      if (!response.ok) {
-        if (response.status == 404) {
-          // tengo que crear el usuario
-          addUser();
-        }
-        return
-      }
-      const data = await response.json()
-      console.log(data)
-      setTodos(data.todos)
-    } catch {
-      console.log('error')
-    }
-  }
-
-  const addTodo = async (dataToSend) => {
-    const uri = `${host}/todos/${user}`;
-    const options = {
-      method: 'POST',
-      headers: {
-        "Content-Type": 'application/json'
-      },
-      body: JSON.stringify(dataToSend)
-    }
-    try {
-      const response = await fetch(uri, options)
-      getTodos();
-    } catch {
-      console.log('error')
-    }
-
-  }
-
-  const modifyTodo = async (id, dataToSend) => {
-    const uri = `${host}/todos/${id}`;
-    const options = {
-      method: 'PUT',
-      headers: {
-        "Content-Type": 'application/json'
-      },
-      body: JSON.stringify(dataToSend)
-    };
-    try {
-      const response = await fetch(uri, options)
-      getTodos()
-    } catch {
-      console.log('error');
-      
-    }
-  }
-
-  const deleteTodo = async (id) => {
-    const uri = `${host}/todos/${id}`;
-    const options = {method: 'DELETE'}
-    try {
-      const response = await fetch(uri, options)
-      getTodos();
-    } catch {
-      console.log('error')
-    }
-  }
-
-
-  /* Handles Submit: Formulario ADD - Formulario EDIT */
-  const handeSubmitAdd = (event) => {
+    /* Handles Submit: Formulario ADD - Formulario EDIT */
+  const handeSubmitAdd = async (event) => {
     event.preventDefault();
     const dataToSend = {
       label: newTask,
@@ -102,11 +45,19 @@ export const TodoListFetch = () => {
     }
     console.log(dataToSend)
     // ejecutar la funcion que realiza el fetch POST
-    addTodo(dataToSend);
+    const data = await addTodo(dataToSend);
+      if (!data) {
+        console.log('error')
+      }
+      // grabar los datos en el store.todos mediante el dispatch 'getTodos'
+      dispatch({
+        type: 'getTodos',
+        payload: data
+      })
     setNewTask('')
   }
 
-  const handleSubmitEdit = (event) => {
+  const handleSubmitEdit = async (event) => {
     event.preventDefault();
     const dataToSend = {
       label: editTask,
@@ -114,7 +65,11 @@ export const TodoListFetch = () => {
     }
     console.log(editTodo)
     console.log(dataToSend)
-    modifyTodo(editTodo.id, dataToSend)
+    const data = await modifyTodo(editTodo.id, dataToSend)
+    dispatch({
+        type: 'getTodos',
+        payload: data
+    })
     setIsEdit(false)
 
   }
@@ -140,17 +95,17 @@ export const TodoListFetch = () => {
     setEditCompleted(tarea.is_done)
   }
 
-  const handleDelete = (tarea) => {
+  const handleDelete = async (tarea) => {
     console.log(tarea)
     console.log(tarea.id)
     // la funcion que borra
-    deleteTodo(tarea.id)
+    const data = await deleteTodo(tarea.id)
+    dispatch({
+        type: 'getTodos',
+        payload: data
+    })
+
   }
-
-
-  useEffect(() => {
-    getTodos()
-  }, [])
 
 
   return (
