@@ -8,7 +8,7 @@ import { Alert } from "../components/Alert.jsx"
 
 export const Layout = () => {
     return (
-        <div>
+        <div className="d-flex flex-column min-vh-100">
             {/* <ScrollToTop> */}
             <Navbar />
             <Alert />
