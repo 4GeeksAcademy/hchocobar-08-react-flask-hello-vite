@@ -11,6 +11,8 @@ import { TodoListFetch } from "./pages/TodoListFetch.jsx";
 // Demo components
 import { Single } from "./pages/Single.jsx";
 import { Demo } from "./pages/Demo.jsx";
+import { Users } from "./pages/Users.jsx";
+import { UsersDetails } from "./pages/UsersDetails.jsx";
 
 
 export const router = createBrowserRouter(
@@ -26,6 +28,8 @@ export const router = createBrowserRouter(
             <Route path='/simple-counter' element={<SimpleCounter />} />
             <Route path='/todolist' element={<TodoList />} />
             <Route path='/todolist-fetch' element={<TodoListFetch />} />
+            <Route path='/users' element={<Users />} />
+            <Route path='/users/:id' element={<UsersDetails />} />
         </Route>
     )
 );
