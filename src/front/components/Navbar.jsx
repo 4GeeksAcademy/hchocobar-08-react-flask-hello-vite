@@ -21,7 +21,7 @@ export const Navbar = () => {
   // 4.- Retorno un solo elemento HTML 
   return (
     <div>
-      <nav className="navbar navbar-expand-lg bg-body-tertiary">
+      <nav className="navbar navbar-expand-md bg-body-tertiary">
         <div className="container-fluid">
           <Link className="navbar-brand" to="#">{cohorte}</Link>
           <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -30,10 +30,10 @@ export const Navbar = () => {
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
               <li className="nav-item">
-                <Link className="nav-link active" aria-current="page" to="#">Home</Link>
+                <Link className="nav-link" aria-current="page" to="/">Item Menu</Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to="/simple-counter">Simple Counter</Link>
+                <Link className="nav-link" to="/users">Users</Link>
               </li>
               <li className="nav-item dropdown">
                 <Link className="nav-link dropdown-toggle" to="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -42,8 +42,8 @@ export const Navbar = () => {
                 <ul className="dropdown-menu">
                   <li><Link className="dropdown-item" to="/todolist">Todo List</Link></li>
                   <li><Link className="dropdown-item" to="/todolist-fetch#">Todo List Fetch</Link></li>
-                  <li><hr className="dropdown-divider"/></li>
-                  <li><Link className="dropdown-item" to="#">Something else here</Link></li>
+                  <li><hr className="dropdown-divider" /></li>
+                  <li><Link className="dropdown-item" to="simple-counter">Simple Counter</Link></li>
                 </ul>
               </li>
               <li className="nav-item">
@@ -51,9 +51,25 @@ export const Navbar = () => {
               </li>
             </ul>
             <form onSubmit={handleOnSubmint} className="d-flex" role="search">
-              <BtnCallActions/>
+              <BtnCallActions />
               <button className="btn btn-outline-success" type="submit">Login</button>
             </form>
+
+
+            <div className="dropdown me-3">
+              <button className="btn btn-secondary dropdown-toggle position-relative" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Dropdown button
+                <span class="position-absolute top-0 start-80 translate-middle badge rounded-pill bg-danger">
+                  {store.favorites.length}
+                  <span class="visually-hidden">unread messages</span>
+                </span>
+              </button>
+              <ul className="dropdown-menu">
+                {store.favorites.map(item => 
+                  <li className="dropdown-item">{item}</li>
+                )}
+              </ul>
+            </div>
           </div>
         </div>
       </nav>
