@@ -4,7 +4,8 @@ import './index.css'  // Estilos globales para nuestra aplicación
 // Configuración de Rutas y el Store
 import { RouterProvider } from "react-router-dom";  // RouterProvider para uilizar las rutas o paths
 import { router } from "./routes.jsx";  // Definición de las rutas o paths
-import { StoreProvider } from './hooks/useGlobalReducer.jsx';  // StoreProvider que gestiona los estados globales
+// StoreProvider que gestiona los estados globales
+import { StoreProvider } from './hooks/useGlobalReducer.jsx';
 // Custom componenets
 import { BackendURL } from './components/BackendURL.jsx';
 
@@ -23,7 +24,9 @@ const Main = () => {
     return (
         <React.StrictMode>  
             <StoreProvider>  {/* Provee el estado global a todos los componentes */}
-                <RouterProvider router={router}></RouterProvider>  {/* Configura el ruteo de la aplicación */} 
+                {/* Configura el ruteo de la aplicación */} 
+                <RouterProvider router={router}>
+                </RouterProvider>
             </StoreProvider>
         </React.StrictMode>
     );

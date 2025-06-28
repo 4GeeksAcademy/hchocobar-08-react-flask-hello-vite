@@ -1,6 +1,4 @@
-import { useEffect } from "react";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
-
 
 export const Home = () => {
 	const { store, dispatch } = useGlobalReducer()
@@ -32,9 +30,7 @@ export const Home = () => {
 		}
 	}
 
-	useEffect(() => {
-		loadMessage()
-	}, [])
+
 
 	return (
 		<div className="text-center mt-5">

@@ -1,24 +1,39 @@
+
 export const initialStore = () => {
   return {
     message: null,
-    todos: [
-      {
-        id: 1,
-        title: "Make the bed",
-        background: null,
-      },
-      {
-        id: 2,
-        title: "Do my homework",
-        background: null,
-      }
-    ]
+    cohorte: 'Spain-108',
+    alert: {
+      text: '',
+      background: '',
+      visible: false
+    },
+    todos: [],
+    users: [],
+    currentUser: {},
+    favorites: ['favorito 1', 'otro favorito', 'uno mas']
   }
 }
 
-export default function storeReducer(store, action = {}) {
+export default function storeReducer(store, action={}) {
   switch (action.type) {
 
+    case 'favorites':
+      return { ...store, favorites: action.payload}
+
+    case 'currentUser':
+      return { ...store, currentUser: action.payload }
+
+    case 'users':
+      return { ...store, users: action.payload}
+      
+    case 'getTodos':
+      return { ...store, todos: action.payload }
+
+    case 'handle_alert':
+      console.log(action)
+      return { ...store, alert: action.payload }
+  
     case 'set_hello':
       return { ...store, message: action.payload };
       
