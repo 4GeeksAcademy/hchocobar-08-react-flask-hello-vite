@@ -6,6 +6,7 @@ db = SQLAlchemy()
 
 
 class Users(db.Model):
+    __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(80), unique=False, nullable=False)
@@ -14,8 +15,17 @@ class Users(db.Model):
     is_active = db.Column(db.Boolean, nullable=False)
     is_admin = db.Column(db.Boolean, nullable=False)
 
+    def serialize(self):
+        return {"id": self.id,
+                "email": self.email,
+                "first_name": self.first_name,
+                "last_name": self.last_name,
+                "is_active": self.is_active,
+                "is_admin": self.is_admin}
+
 
 class Products(db.Model):
+    __tablename__ = 'products'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=True, nullable=False)
     description = db.Column(db.String(300), nullable=False)
@@ -23,6 +33,7 @@ class Products(db.Model):
 
 
 class Bills(db.Model):
+    __tablename__ = 'bills'
     id = db.Column(db.Integer, primary_key=True)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     total_price = db.Column(db.Float, nullable=False)
@@ -49,6 +60,7 @@ class BillItems(db.Model):
 
 
 class Followers(db.Model):
+    __tablename__ = 'followers'
     id = db.Column(db.Integer, primary_key=True)
     following_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     following_to = db.relationship('Users', foreign_keys=[following_id], 
@@ -59,3 +71,8 @@ class Followers(db.Model):
 
     def __repr__(self):
         return f'following: {self.following_id} - follower: {self.follower_id}'    
+
+    def serialize(self):
+        return {'id': self.id,
+                'following_id': self.following_id,
+                'follower_id': self.follower_id}
