@@ -15,13 +15,18 @@ class Users(db.Model):
     is_active = db.Column(db.Boolean, nullable=False)
     is_admin = db.Column(db.Boolean, nullable=False)
 
+    def __repr__(self):
+        return f'<Users: {self.id} - email: {self.email}>'
+    
     def serialize(self):
         return {"id": self.id,
                 "email": self.email,
                 "first_name": self.first_name,
                 "last_name": self.last_name,
                 "is_active": self.is_active,
-                "is_admin": self.is_admin}
+                "is_admin": self.is_admin,
+                'followers': [row.serialize()['following_id'] for row in self.follower_to],
+                'followings': [row.serialize()['follower_id'] for row in self.following_to]}
 
 
 class Products(db.Model):
@@ -45,6 +50,10 @@ class Bills(db.Model):
     user_to = db.relationship('Users', foreign_keys=[user_id],
                                backref=db.backref('bill_to', lazy='select'))
 
+    def serialize(self):
+        return {"id": self.id,
+                'user': self.user_id.serialize()['first_name']}
+
 
 class BillItems(db.Model):
     __tablename__ = 'bill_items'
@@ -63,14 +72,14 @@ class Followers(db.Model):
     __tablename__ = 'followers'
     id = db.Column(db.Integer, primary_key=True)
     following_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    following_to = db.relationship('Users', foreign_keys=[following_id], 
+    following_to = db.relationship('Users', foreign_keys=[following_id],
                                    backref=db.backref('following_to', lazy='select'))
     follower_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    follower_to = db.relationship('Users', foreign_keys=[follower_id], 
-                                   backref=db.backref('follower_to', lazy='select'))
+    follower_to = db.relationship('Users', foreign_keys=[follower_id],
+                                  backref=db.backref('follower_to', lazy='select'))
 
     def __repr__(self):
-        return f'following: {self.following_id} - follower: {self.follower_id}'    
+        return f'following: {self.following_id} - follower: {self.follower_id}'
 
     def serialize(self):
         return {'id': self.id,
