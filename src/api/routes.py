@@ -6,7 +6,10 @@ from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from api.models import db, Users, Followers
 import requests
-
+from flask_jwt_extended import create_access_token
+from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import jwt_required
+from flask_jwt_extended import get_jwt
 
 api = Blueprint('api', __name__)
 CORS(api)  # Allow CORS requests to this API
@@ -14,6 +17,45 @@ CORS(api)  # Allow CORS requests to this API
 @api.route('/hello', methods=['POST', 'GET'])
 def handle_hello():
     response_body = {"message": "Hello! I'm a message that came from the backend"}
+    return response_body, 200
+
+
+# Create a route to authenticate your users and return JWTs. The
+# create_access_token() function is used to actually generate the JWT.
+@api.route("/login", methods=["POST"])
+def login():
+    response_body = {}
+    data = request.json
+    email = data.get("email", None).lower()
+    password = request.json.get("password", None)
+    # Buscar el email y el password en la DB y verificar si is_active es True
+    user = db.session.execute(db.select(Users).where(Users.email == email,
+                                                     Users.password == password,
+                                                     Users.is_active == True)).scalar()
+    if not user:
+        response_body['message'] = 'Bad email or password'
+        return response_body, 401
+
+    claims = {'user_id': user.serialize()['id'],
+              'is_admin': user.serialize()['is_admin']}
+    access_token = create_access_token(identity=email, additional_claims=claims)
+
+    response_body['message'] = 'User logged ok'
+    response_body['access_token'] = access_token
+    return response_body, 200
+
+
+# Protect a route with jwt_required, which will kick out requests
+# without a valid JWT present.
+@api.route("/protected", methods=["GET"])
+@jwt_required()
+def protected():
+    response_body = {}
+    # Access the identity of the current user with get_jwt_identity
+    current_user = get_jwt_identity()
+    additional_claims = get_jwt()  # Los datos adicionales
+    response_body['current_user'] = current_user
+    response_body['aditional_data'] = additional_claims
     return response_body, 200
 
 
@@ -45,8 +87,12 @@ def users():
 
 
 @api.route('/users/<int:id>', methods=['GET', 'PUT', 'DELETE'])
+@jwt_required()
 def user(id):
     response_body = {}
+    claims = get_jwt() 
+    print(claims['user_id'])
+    print(claims['is_admin'])
     user = db.session.execute(db.select(Users).where(Users.id == id)).scalar()
     if not user:
         response_body['message'] = f'Usuario {id} no encontrado'
@@ -58,6 +104,9 @@ def user(id):
         print(user)
         return response_body, 200
     if request.method == 'PUT':
+        if claims['user_id'] != id:
+            response_body['message'] = f'El usuario {claims['user_id']} No tienes permiso para ver los datos de {id}'
+            return response_body, 401
         data = request.json
         user.email = data.get('email', user.email)
         user.password = data.get('password', user.password)
