@@ -85,3 +85,34 @@ class Followers(db.Model):
         return {'id': self.id,
                 'following_id': self.following_id,
                 'follower_id': self.follower_id}
+
+
+class Characters(db.Model):
+    __tablename__ = 'characters'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    birth_year = db.Column(db.String(50), nullable=False)
+    eye_color = db.Column(db.String(50), nullable=False)
+    gender = db.Column(db.String(50), nullable=False)
+    hair_color = db.Column(db.String(50), nullable=False)
+    height = db.Column(db.String(20), nullable=False)
+    mass = db.Column(db.String(40), nullable=False)
+    skin_color = db.Column(db.String(50), nullable=False)
+    homeworld = db.Column(db.String(100), nullable=False)
+    url = db.Column(db.String(200), nullable=False)
+
+    def __repr__(self):
+        return f'<Character: {self.id} - name: {self.name}>'
+
+    def serialize(self):
+        return {'id': self.id,    
+                'name': self.name,    
+                'birth_year': self.birth_year,
+                'eye_color': self.eye_color,
+                'gender': self.gender,
+                'hair_color': self.hair_color,
+                'height': self.height,
+                'mass': self.mass,
+                'skin_color': self.skin_color,
+                'homeworld': self.homeworld,
+                'url':self.url}

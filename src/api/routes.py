@@ -5,7 +5,11 @@ from flask import Flask, request, jsonify, url_for, Blueprint
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from api.models import db, Users, Followers
-
+import requests
+from flask_jwt_extended import create_access_token
+from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import jwt_required
+from flask_jwt_extended import get_jwt
 
 api = Blueprint('api', __name__)
 CORS(api)  # Allow CORS requests to this API
@@ -13,6 +17,45 @@ CORS(api)  # Allow CORS requests to this API
 @api.route('/hello', methods=['POST', 'GET'])
 def handle_hello():
     response_body = {"message": "Hello! I'm a message that came from the backend"}
+    return response_body, 200
+
+
+# Create a route to authenticate your users and return JWTs. The
+# create_access_token() function is used to actually generate the JWT.
+@api.route("/login", methods=["POST"])
+def login():
+    response_body = {}
+    data = request.json
+    email = data.get("email", None).lower()
+    password = request.json.get("password", None)
+    # Buscar el email y el password en la DB y verificar si is_active es True
+    user = db.session.execute(db.select(Users).where(Users.email == email,
+                                                     Users.password == password,
+                                                     Users.is_active == True)).scalar()
+    if not user:
+        response_body['message'] = 'Bad email or password'
+        return response_body, 401
+
+    claims = {'user_id': user.serialize()['id'],
+              'is_admin': user.serialize()['is_admin']}
+    access_token = create_access_token(identity=email, additional_claims=claims)
+
+    response_body['message'] = 'User logged ok'
+    response_body['access_token'] = access_token
+    return response_body, 200
+
+
+# Protect a route with jwt_required, which will kick out requests
+# without a valid JWT present.
+@api.route("/protected", methods=["GET"])
+@jwt_required()
+def protected():
+    response_body = {}
+    # Access the identity of the current user with get_jwt_identity
+    current_user = get_jwt_identity()
+    additional_claims = get_jwt()  # Los datos adicionales
+    response_body['current_user'] = current_user
+    response_body['aditional_data'] = additional_claims
     return response_body, 200
 
 
@@ -44,8 +87,12 @@ def users():
 
 
 @api.route('/users/<int:id>', methods=['GET', 'PUT', 'DELETE'])
+@jwt_required()
 def user(id):
     response_body = {}
+    claims = get_jwt() 
+    print(claims['user_id'])
+    print(claims['is_admin'])
     user = db.session.execute(db.select(Users).where(Users.id == id)).scalar()
     if not user:
         response_body['message'] = f'Usuario {id} no encontrado'
@@ -57,6 +104,9 @@ def user(id):
         print(user)
         return response_body, 200
     if request.method == 'PUT':
+        if claims['user_id'] != id:
+            response_body['message'] = f'El usuario {claims['user_id']} No tienes permiso para ver los datos de {id}'
+            return response_body, 401
         data = request.json
         user.email = data.get('email', user.email)
         user.password = data.get('password', user.password)
@@ -105,3 +155,41 @@ def follower():
         response_body['message'] = f'El usuario {follower_id} ahora segue al usuario {following_id}'
         response_body['results'] = follow.serialize()
         return response_body, 200
+
+
+@api.route('/cohorts/<int:cohort_id>/students', methods=['GET', 'POST'])
+def cohorts_students(cohort_id):
+    response_body = {}
+    response_body['message'] = f'Todos los estudiantes de la cohorte {cohort_id}'
+    return response_body, 200
+
+# students/<int:id>/subject
+# authors/<int:id>/books
+# directors/<int:id>/movies
+# brands/<int:id>/models
+# category/<int:id>/products
+# posts/<int:id>/comments
+# users//<int:id>/posts
+
+@api.route('/job-users')
+def job_users():
+    response_body = {}
+    # Deseo consumir la api JSONPlaceHoOlder : users
+    url = 'https://jsonplaceholder.typicode.com/users'
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        for row in data:
+            print(row['name'], row['email'])
+            user = Users(first_name=row['name'],
+                         last_name=row['username'],
+                         email=row['email'].lower(),
+                         password='1234',
+                         is_active=True,
+                         is_admin=False)
+            db.session.add(user)
+        db.session.commit()
+        response_body['message'] = 'Todo ok con JSPH'
+        response_body['results'] = data
+        return response_body, 200
+    return response_body, 400
