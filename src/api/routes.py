@@ -5,6 +5,7 @@ from flask import Flask, request, jsonify, url_for, Blueprint
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from api.models import db, Users, Followers
+import requests
 
 
 api = Blueprint('api', __name__)
@@ -105,3 +106,41 @@ def follower():
         response_body['message'] = f'El usuario {follower_id} ahora segue al usuario {following_id}'
         response_body['results'] = follow.serialize()
         return response_body, 200
+
+
+@api.route('/cohorts/<int:cohort_id>/students', methods=['GET', 'POST'])
+def cohorts_students(cohort_id):
+    response_body = {}
+    response_body['message'] = f'Todos los estudiantes de la cohorte {cohort_id}'
+    return response_body, 200
+
+# students/<int:id>/subject
+# authors/<int:id>/books
+# directors/<int:id>/movies
+# brands/<int:id>/models
+# category/<int:id>/products
+# posts/<int:id>/comments
+# users//<int:id>/posts
+
+@api.route('/job-users')
+def job_users():
+    response_body = {}
+    # Deseo consumir la api JSONPlaceHoOlder : users
+    url = 'https://jsonplaceholder.typicode.com/users'
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        for row in data:
+            print(row['name'], row['email'])
+            user = Users(first_name=row['name'],
+                         last_name=row['username'],
+                         email=row['email'].lower(),
+                         password='1234',
+                         is_active=True,
+                         is_admin=False)
+            db.session.add(user)
+        db.session.commit()
+        response_body['message'] = 'Todo ok con JSPH'
+        response_body['results'] = data
+        return response_body, 200
+    return response_body, 400
