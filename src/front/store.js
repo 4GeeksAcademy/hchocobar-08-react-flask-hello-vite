@@ -11,13 +11,16 @@ export const initialStore = () => {
     todos: [],
     users: [],
     currentUser: {},
-    favorites: ['favorito 1', 'otro favorito', 'uno mas']
+    favorites: ['favorito 1', 'otro favorito', 'uno mas'],
+    token: ''
   }
 }
 
 export default function storeReducer(store, action={}) {
   switch (action.type) {
 
+    case 'token':
+      return { ...store, token: action.payload}
     case 'favorites':
       return { ...store, favorites: action.payload}
 
@@ -31,7 +34,6 @@ export default function storeReducer(store, action={}) {
       return { ...store, todos: action.payload }
 
     case 'handle_alert':
-      console.log(action)
       return { ...store, alert: action.payload }
   
     case 'set_hello':
