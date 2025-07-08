@@ -7,7 +7,7 @@ import useGlobalReducer from "../hooks/useGlobalReducer";
 
 // 2.- Creo el componente (función)
 export const Navbar = () => {
-  const { store } = useGlobalReducer();
+  const { store, dispatch } = useGlobalReducer();
   const navigate = useNavigate()
 
   const cohorte = store.cohorte;
@@ -18,13 +18,44 @@ export const Navbar = () => {
     navigate('/login')
   }
 
+  const handleLoginLogout = () => {
+    if (store.isLogged) {
+      // verdadero, estamos logeados y queremos hacer Logout
+      // 1. eliminar el token del store y del localStorage
+      localStorage.removeItem('token')
+      dispatch({type: 'token' , payload: ''})
+      // 2. cambiar a false el valor de store.isLogged
+      dispatch({type: 'isLogged', payload: false})
+      // 3. navegar al home
+      navigate('/')
+    } else {
+      // falso, estamos deslogeados y acabamos de logearnos
+      navigate('/login')
+    }
+
+  }
+
+  const handleRegister = () => {
+    if (store.isLogged) {
+      navigate('/edit-profile')
+    } else {
+      navigate('/register')
+    }
+  }
+
   // 4.- Retorno un solo elemento HTML 
   return (
     <div>
       <nav className="navbar navbar-expand-md bg-body-tertiary">
         <div className="container-fluid">
           <Link className="navbar-brand" to="#">{cohorte}</Link>
-          <Link to='/login' className="btn btn-outline-success">Login</Link>
+          <span onClick={handleLoginLogout} className="btn btn-outline-success">
+            {store.isLogged ? 'Logout' : 'Login'}
+          </span>
+          <span onClick={handleRegister} className="btn btn-outline-success">
+            {store.isLogged ? 'Edit Proflie' : 'Register'}
+          </span>
+
           <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span className="navbar-toggler-icon"></span>
           </button>
@@ -33,9 +64,13 @@ export const Navbar = () => {
               <li className="nav-item">
                 <Link className="nav-link" aria-current="page" to="/">Item Menu</Link>
               </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/users">Users</Link>
-              </li>
+              { store.isLogged ? 
+                <li className="nav-item">
+                  <Link className="nav-link" to="/users">Users</Link>
+                </li>
+                :
+                ''
+              }
               <li className="nav-item dropdown">
                 <Link className="nav-link dropdown-toggle" to="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                   Dropdown
@@ -60,9 +95,9 @@ export const Navbar = () => {
             <div className="dropdown me-3">
               <button className="btn btn-secondary dropdown-toggle position-relative" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                 Dropdown button
-                <span class="position-absolute top-0 start-80 translate-middle badge rounded-pill bg-danger">
+                <span className="position-absolute top-0 start-80 translate-middle badge rounded-pill bg-danger">
                   {store.favorites.length}
-                  <span class="visually-hidden">unread messages</span>
+                  <span className="visually-hidden">unread messages</span>
                 </span>
               </button>
               <ul className="dropdown-menu">
