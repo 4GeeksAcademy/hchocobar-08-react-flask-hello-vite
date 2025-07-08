@@ -24,11 +24,12 @@ export const Navbar = () => {
       <nav className="navbar navbar-expand-md bg-body-tertiary">
         <div className="container-fluid">
           <Link className="navbar-brand" to="#">{cohorte}</Link>
+          <Link to='/login' className="btn btn-outline-success">Login</Link>
           <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span className="navbar-toggler-icon"></span>
           </button>
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+            <ul className="navbar-nav me-auto mb-2 mb-sm-0">
               <li className="nav-item">
                 <Link className="nav-link" aria-current="page" to="/">Item Menu</Link>
               </li>
@@ -52,7 +53,7 @@ export const Navbar = () => {
             </ul>
             <form onSubmit={handleOnSubmint} className="d-flex" role="search">
               <BtnCallActions />
-              <button className="btn btn-outline-success" type="submit">Login</button>
+              {/* <button className="btn btn-outline-success" type="submit">Login</button> */}
             </form>
 
 

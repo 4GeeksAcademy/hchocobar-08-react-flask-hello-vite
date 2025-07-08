@@ -1,5 +1,7 @@
 import { useState } from "react";
 import useGlobalReducer from "../hooks/useGlobalReducer";
+import { login } from "../services/auth.js";
+import { useNavigate } from "react-router-dom";
 
 /* Controlando Inputs */
 // 1. Debo declarar un 'estado' para cada input
@@ -13,13 +15,14 @@ export const Login = () => {
   const { dispatch } = useGlobalReducer()
   const [ email, setEmail ]  = useState('');
   const [ password, setPassword ] = useState('');
-  const [ checkMe, setCheckMe ] = useState(false);
+  /* const [ checkMe, setCheckMe ] = useState(false); */
+  const navigate = useNavigate()
 
   const handleEmail = (event) => {setEmail(event.target.value)};
   const handlePassword = event => setPassword(event.target.value);
-  const handleCheckMe = event => setCheckMe(event.target.checked);
+  /* const handleCheckMe = event => setCheckMe(event.target.checked); */
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     // Opción 1
     // const dataToSend = {email, password, imAgree: checkMe}
@@ -27,10 +30,21 @@ export const Login = () => {
     const dataToSend = {
       email: email,
       password: password,
-      imAgree: checkMe
     }
-    console.log(dataToSend)
+    // console.log(dataToSend)
     // suponemos que tuvo un login exitoso
+    const result = await login(dataToSend)
+    console.log(result.message)
+    console.log(result.access_token)
+    // Todo exitoso, que hago con el Token
+    // 1. lo grabo en LocalStorage()
+    localStorage.setItem('token', result.access_token)
+    // 2. lo grabo en el store
+    dispatch({
+      type: 'token',
+      payload: result.access_token
+    })
+
     dispatch({
       type: 'handle_alert',
       payload: {
@@ -39,6 +53,8 @@ export const Login = () => {
         visible: true
       }
     })
+    // navegar al componente (dashboar) utilizando el useNavigate
+    navigate('/users')
   }
 
   const handleReset = () => {
@@ -72,11 +88,11 @@ export const Login = () => {
               <input type="password" className="form-control" id="exampleInputPassword1"
                 value={password} onChange={handlePassword}/>
             </div>
-            <div className="mb-3 form-check">
+            {/* <div className="mb-3 form-check">
               <input type="checkbox" className="form-check-input" id="exampleCheck1"
                 checked={checkMe} onChange={handleCheckMe}/>
               <label className="form-check-label" htmlFor="exampleCheck1">Check me out</label>
-            </div>
+            </div> */}
             <button type="submit" className="btn btn-primary">Submit</button>
             <button type="reset" onClick={handleReset} className="btn btn-secondary ms-2">Reset</button>
           </form>
