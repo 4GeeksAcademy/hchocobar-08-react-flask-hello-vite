@@ -13,6 +13,8 @@ import { Single } from "./pages/Single.jsx";
 import { Demo } from "./pages/Demo.jsx";
 import { Users } from "./pages/Users.jsx";
 import { UsersDetails } from "./pages/UsersDetails.jsx";
+import { Register } from "./pages/Register.jsx";
+import { EditProfile } from "./pages/EditProfile.jsx";
 
 
 export const router = createBrowserRouter(
@@ -25,6 +27,8 @@ export const router = createBrowserRouter(
             <Route path="/single/:theId" element={<Single />} />
             <Route path="/demo" element={<Demo />} />
             <Route path='/login' element={<Login />} />
+            <Route path='/register' element={<Register />} />
+            <Route path='/edit-profile' element={<EditProfile />} />
             <Route path='/simple-counter' element={<SimpleCounter />} />
             <Route path='/todolist' element={<TodoList />} />
             <Route path='/todolist-fetch' element={<TodoListFetch />} />

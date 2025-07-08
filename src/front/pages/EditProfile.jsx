@@ -1,41 +1,37 @@
 import { useState } from "react";
 import useGlobalReducer from "../hooks/useGlobalReducer";
-import { login } from "../services/auth.js";
+// import { register } from "../services/auth.js";
+import { modifyUser } from "../services/users.js";
 import { useNavigate } from "react-router-dom";
 
-/* Controlando Inputs */
-// 1. Debo declarar un 'estado' para cada input
-// 2. Vicular el atributo value/cheked del input con el estado
-// 3. Declarar la función handleNnnnnn para actualizar el estado con el valor del 
-//          event.target.value
-// 4. Definir el evento onChange que llama a una función (handle)
 
-// 5 y 2
-export const Login = () => {
-  const { dispatch } = useGlobalReducer()
-  const [ email, setEmail ]  = useState('');
-  const [ password, setPassword ] = useState('');
-  /* const [ checkMe, setCheckMe ] = useState(false); */
+export const EditProfile = () => {
+  const { store, dispatch } = useGlobalReducer()
+  const user = store.currentUser
+  const [ email, setEmail ]  = useState(user.email);
+  const [ firstName, setFirstName ] = useState(user.first_name);
+  const [ checkMe, setCheckMe ] = useState(user.is_admin);
   const navigate = useNavigate()
 
   const handleEmail = (event) => {setEmail(event.target.value)};
-  const handlePassword = event => setPassword(event.target.value);
-  /* const handleCheckMe = event => setCheckMe(event.target.checked); */
+  const handleFirstName = event => setFirstName(event.target.value);
+  const handleCheckMe = event => setCheckMe(event.target.checked);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     // Opción 1
-    // const dataToSend = {email, password, imAgree: checkMe}
+    // const dataToSend = {email, firstName, imAgree: checkMe}
     // Opción 2
     const dataToSend = {
       email: email,
-      password: password,
+      first_name: firstName,
+      is_admin: checkMe
     }
     // console.log(dataToSend)
     // suponemos que tuvo un login exitoso
-    const result = await login(dataToSend)
+    const id = store.currentUser.id
+    const result = await modifyUser(id, dataToSend)
     console.log(result.message)
-    console.log(result.access_token)
     // Todo exitoso, que hago con el Token
     // 1. lo grabo en LocalStorage()
     localStorage.setItem('token', result.access_token)
@@ -45,8 +41,6 @@ export const Login = () => {
       payload: result.access_token
     })
     dispatch({type: 'isLogged', payload: true})
-    // 4. Grabo los datos del usuario en currentUser
-    dispatch({type: 'currentUser', payload: result.results})
     dispatch({
       type: 'handle_alert',
       payload: {
@@ -76,7 +70,7 @@ export const Login = () => {
   // 4
   return (
     <div className="container text-start">
-      <h1 className="text-center text-primary">Login</h1>
+      <h1 className="text-center text-danger">Edit Profile</h1>
       <div className="row">
         <div className="col-10 col-sm-8 col-md-6 m-auto">
           <form onSubmit={handleSubmit}>
@@ -87,15 +81,15 @@ export const Login = () => {
             </div>
             <div className="mb-3">
               <label htmlFor="exampleInputPassword1" className="form-label">Password</label>
-              <input type="password" className="form-control" id="exampleInputPassword1"
-                value={password} onChange={handlePassword}/>
+              <input type="text" className="form-control" id="exampleInputPassword1"
+                value={firstName} onChange={handleFirstName}/>
             </div>
-            {/* <div className="mb-3 form-check">
+            <div className="mb-3 form-check">
               <input type="checkbox" className="form-check-input" id="exampleCheck1"
                 checked={checkMe} onChange={handleCheckMe}/>
-              <label className="form-check-label" htmlFor="exampleCheck1">Check me out</label>
-            </div> */}
-            <button type="submit" className="btn btn-primary">Submit</button>
+              <label className="form-check-label" htmlFor="exampleCheck1">Is Admin</label>
+            </div>
+            <button type="submit" className="btn btn-danger">Save</button>
             <button type="reset" onClick={handleReset} className="btn btn-secondary ms-2">Reset</button>
           </form>
         </div>

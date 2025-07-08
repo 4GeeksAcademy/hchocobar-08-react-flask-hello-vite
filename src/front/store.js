@@ -12,13 +12,15 @@ export const initialStore = () => {
     users: [],
     currentUser: {},
     favorites: ['favorito 1', 'otro favorito', 'uno mas'],
-    token: ''
+    token: '',
+    isLogged: false
   }
 }
 
 export default function storeReducer(store, action={}) {
   switch (action.type) {
-
+    case 'isLogged':
+      return { ...store, isLogged: action.payload}
     case 'token':
       return { ...store, token: action.payload}
     case 'favorites':

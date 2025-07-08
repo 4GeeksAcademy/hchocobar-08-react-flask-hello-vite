@@ -40,8 +40,9 @@ def login():
               'is_admin': user.serialize()['is_admin']}
     access_token = create_access_token(identity=email, additional_claims=claims)
 
-    response_body['message'] = 'User logged ok'
     response_body['access_token'] = access_token
+    response_body['message'] = 'User logged ok'
+    response_body['results'] = user.serialize()
     return response_body, 200
 
 
@@ -59,31 +60,40 @@ def protected():
     return response_body, 200
 
 
-@api.route('/users', methods=['GET', 'POST'])
+@api.route('/register', methods=['POST'])
+def register():
+    response_body = {}
+    data = request.json
+    email = data.get('email', 'user@email.com').lower()
+    # verificar que el mail no exista en mi DB
+    user = Users()
+    user.email = email
+    user.password = data.get('password', '1')
+    user.is_active = True
+    user.is_admin = data.get('is_admin', False)
+    user.first_name = data.get('first_name', None)
+    user.last_name = data.get('last_name', None)
+    db.session.add(user)
+    db.session.commit()
+    claims = {'user_id': user.serialize()['id'],
+              'is_admin': user.serialize()['is_admin']}
+    access_token = create_access_token(identity=email, additional_claims=claims)
+
+    response_body['access_token'] = access_token
+    response_body['results'] = user.serialize()
+    response_body['message'] = 'Usuario registrado ok'
+    return response_body, 201
+
+
+@api.route('/users', methods=['GET'])
 def users():
     response_body = {}
-    if request.method == 'GET':
-        response_body['message'] = 'Respuesta del GET'
-        # ejecuando ( SELECT * FROM users )  -- scalars devuelve un iterable (similar a una lista)
-        rows = db.session.execute(db.select(Users).where(Users.is_active)).scalars()
-        # result = [row.serialize() for row in rows]
-        response_body['results'] = [row.serialize() for row in rows]  # list comprehension
-        return response_body, 200
-    if request.method == 'POST': 
-        data = request.json
-        print(data)
-        user = Users()
-        user.email = data.get('email', 'user@email.com').to_lower()
-        user.password = data.get('password', '1')
-        user.is_active = True
-        user.is_admin = data.get('is_admin', False)
-        user.first_name = data.get('first_name', None)
-        user.last_name = data.get('last_name', None)
-        db.session.add(user)
-        db.session.commit()
-        response_body['results'] = user.serialize()
-        response_body['message'] = 'Respuesta del Post de Users'
-        return response_body, 201
+    response_body['message'] = 'Respuesta del GET'
+    # ejecuando ( SELECT * FROM users )  -- scalars devuelve un iterable (similar a una lista)
+    rows = db.session.execute(db.select(Users).where(Users.is_active)).scalars()
+    # result = [row.serialize() for row in rows]
+    response_body['results'] = [row.serialize() for row in rows]  # list comprehension
+    return response_body, 200
 
 
 @api.route('/users/<int:id>', methods=['GET', 'PUT', 'DELETE'])
