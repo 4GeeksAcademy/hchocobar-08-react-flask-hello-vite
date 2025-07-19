@@ -29,14 +29,6 @@ class Users(db.Model):
                 'followings': [row.serialize()['follower_id'] for row in self.following_to]}
 
 
-class Products(db.Model):
-    __tablename__ = 'products'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), unique=True, nullable=False)
-    description = db.Column(db.String(300), nullable=False)
-    price = db.Column(db.Float, nullable=False)
-
-
 class Bills(db.Model):
     __tablename__ = 'bills'
     id = db.Column(db.Integer, primary_key=True)
@@ -44,15 +36,23 @@ class Bills(db.Model):
     total_price = db.Column(db.Float, nullable=False)
     bill_address = db.Column(db.String(180), nullable=False)
     delivery_address = db.Column(db.String(180), nullable=False)
-    status = db.Column(db.Enum('pending', 'paid', 'cancel', name='status'), nullable=False)
-    payment_method = db.Column(db.Enum('visa', 'amex', 'paypal', name='payment_method'), nullable=False)
+    status = db.Column(db.Enum('pending', 'paid', 'cancel', name='status'))
+    payment_method = db.Column(db.Enum('visa', 'amex', 'paypal', name='payment_method'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     user_to = db.relationship('Users', foreign_keys=[user_id],
                                backref=db.backref('bill_to', lazy='select'))
 
     def serialize(self):
         return {"id": self.id,
-                'user': self.user_id.serialize()['first_name']}
+                'user_id': self.user_id,
+                'created_at': self.created_at.isoformat(),
+                'total_price': self.total_price,
+                'bill_address': self.bill_address,
+                'delivery_address': self.delivery_address,
+                'status': self.status,
+                'payment_method': self.payment_method,
+                'user_first_name': self.user_to.first_name,
+                'user_last_name': self.user_to.last_name}
 
 
 class BillItems(db.Model):
@@ -66,6 +66,14 @@ class BillItems(db.Model):
     product_id = db.Column(db.Integer, db.ForeignKey('products.id'))
     product_to = db.relationship('Products', foreign_keys=[product_id],
                                   backref=db.backref('bill_item_to', lazy='select'))
+
+
+class Products(db.Model):
+    __tablename__ = 'products'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), unique=True, nullable=False)
+    description = db.Column(db.String(300), nullable=False)
+    price = db.Column(db.Float, nullable=False)
 
 
 class Followers(db.Model):

@@ -4,7 +4,7 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 from flask import Flask, request, jsonify, url_for, Blueprint
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
-from api.models import db, Users, Followers
+from api.models import db, Users, Followers, Bills
 import requests
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import get_jwt_identity
@@ -100,7 +100,7 @@ def users():
 @jwt_required()
 def user(id):
     response_body = {}
-    claims = get_jwt() 
+    claims = get_jwt()
     print(claims['user_id'])
     print(claims['is_admin'])
     user = db.session.execute(db.select(Users).where(Users.id == id)).scalar()
@@ -137,7 +137,7 @@ def user(id):
 
 
 @api.route('/followers', methods=['GET', 'POST'])
-def follower():
+def followers():
     # Voy a recibir el token del usuario del que sigue (follower)
     follower_id = 9
     response_body = {}
@@ -164,6 +164,32 @@ def follower():
         db.session.commit()
         response_body['message'] = f'El usuario {follower_id} ahora segue al usuario {following_id}'
         response_body['results'] = follow.serialize()
+        return response_body, 200
+
+@api.route('/bills', methods=['GET', 'POST'])
+@jwt_required()
+def bills():
+    claims = get_jwt()
+    user_id = claims['user_id']
+    response_body = {}
+    if request.method == 'GET':
+        rows = db.session.execute(db.select(Bills).where(Bills.user_id == user_id)).scalars()
+        response_body['results'] = [row.serialize() for row in rows]
+        response_body['message'] = f'Listado de Facturas del usurio {user_id}'
+        for row in rows:
+            print(row)
+        return response_body, 200
+    if request.method == 'POST':
+        data = request.json
+        bill = Bills(total_price=data.get('total_price', 0),
+                     bill_address=data.get('bill_address', ''),
+                     delivery_address=data.get('delivery_address', ''),
+                     status='pending',
+                     user_id=user_id)
+        db.session.add(bill)
+        db.session.commit()
+        response_body['message'] = f'Se ha creado la factura del usuario {user_id}'
+        # response_body['results'] = bill.serialize()
         return response_body, 200
 
 
