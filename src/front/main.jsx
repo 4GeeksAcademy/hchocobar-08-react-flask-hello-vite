@@ -2,9 +2,10 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import './index.css'  // Global styles for your application
 import { RouterProvider } from "react-router-dom";  // Import RouterProvider to use the router
-import { router } from "./routes";  // Import the router configuration
-import { StoreProvider } from './hooks/useGlobalReducer';  // Import the StoreProvider for global state management
-import { BackendURL } from './components/BackendURL';
+import { router } from "./routes.jsx";  // Import the router configuration
+import { StoreProvider } from './hooks/useGlobalReducer.jsx';  // Import the StoreProvider for global state management
+import { BackendURL } from './components/BackendURL.jsx';
+
 
 const Main = () => {
     
