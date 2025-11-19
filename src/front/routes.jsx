@@ -8,7 +8,9 @@ import { Error404 } from "./pages/Error404.jsx";
 import { Jumbotron } from './pages/Jumbotron.jsx';
 import { TodoList } from './pages/TodoList.jsx'
 import { SimpleCounter } from './pages/SimpleCounter.jsx'
-
+import { ExampleUseState } from './pages/ExampleUseState.jsx'
+import { ExampleFetch } from './pages/ExampleFetch.jsx'
+import { Login } from './pages/Login.jsx'
 
 export const router = createBrowserRouter(
     createRoutesFromElements(
@@ -24,6 +26,9 @@ export const router = createBrowserRouter(
         <Route path='/jumbotron' element={<Jumbotron/>} />
         <Route path="/todo-list" element={<TodoList/>} />
         <Route path="/simple-counter" element={<SimpleCounter/>} />
+        <Route path="/example-use-state" element={<ExampleUseState/>} />
+        <Route path="/example-fetch" element={<ExampleFetch/>} />
+        <Route path="/login" element={<Login/>} />
       </Route>
     )
 );

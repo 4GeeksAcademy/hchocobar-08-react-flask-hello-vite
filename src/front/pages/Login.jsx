@@ -1,9 +1,11 @@
 // 1. import
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 
 // 5 y 2
 export const Login = () => {
+  const navigate = useNavigate()
   // 3. Code JS
   // 1.1 Generar un estado por cada input
   // 1.2 Vincular el estado con el 'value' del input
@@ -28,6 +30,13 @@ export const Login = () => {
     } 
     */
     console.log(dataToSend)
+    const response = {ok: true}
+    if (!response.ok) {
+      handleReset()
+      return
+    }
+    // enviar al jumbotron
+    navigate('/jumbotron')
   }
 
   const handleReset = () => {
