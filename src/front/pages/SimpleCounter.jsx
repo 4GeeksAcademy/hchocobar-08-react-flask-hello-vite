@@ -60,7 +60,7 @@ export const SimpleCounter = () => {
   // Retornaremos un solo elemento HTML
   return (
     <div className="container">
-      <h1 className="text-success">Simple Counter</h1>
+      <h1 className="text-success text-center">Simple Counter</h1>
       <h2 className={`text-${title.align} text-${title.background}`}>
         {title.text}
       </h2>

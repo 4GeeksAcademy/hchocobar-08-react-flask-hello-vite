@@ -25,24 +25,21 @@ export const Navbar = () => {
             </li>
             <li className="nav-item dropdown">
               <Link className="nav-link dropdown-toggle" to="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Dropdown
+                Proyectos
               </Link>
               <ul className="dropdown-menu">
                 <li><Link className="dropdown-item" to="/todo-list">Todo List</Link></li>
                 <li><Link className="dropdown-item" to="/simple-counter">Simple Counter</Link></li>
                 <li><hr className="dropdown-divider"/></li>
-                <li><Link className="dropdown-item" to="#">Something else here</Link></li>
+                <li><Link className="dropdown-item" to="/example-use-state">Example useState</Link></li>
+                <li><Link className="dropdown-item" to="/example-fetch">{'Example fetch() async/await'}</Link></li>
               </ul>
             </li>
             <li className="nav-item">
               <Link className="nav-link disabled" aria-disabled="true">Disabled</Link>
             </li>
           </ul>
-          <form className="d-flex" role="search">
-            <BtnCallAction/>
-            {/* <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-            <button className="btn btn-outline-success" type="submit">Search</button> */}
-          </form>
+          <Link className='btn btn-warning' to='/login'>Login</Link>
         </div>
       </div>
     </nav>
