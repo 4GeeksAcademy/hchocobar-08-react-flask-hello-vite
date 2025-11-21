@@ -1,11 +1,10 @@
+import useGlobalReducer from "../hooks/useGlobalReducer.jsx"
 
 
 export const Alert = () => {
-  const alerContent = {
-    text: 'Hola, soy el alert. A simple primary alert—check it out!',
-    color: 'danger',
-    display: true
-  }
+  const { store } = useGlobalReducer();
+
+  const alerContent = store.alert;
 
   return (
     <div className={`container ${alerContent.display ? '' : 'd-none'}`}>

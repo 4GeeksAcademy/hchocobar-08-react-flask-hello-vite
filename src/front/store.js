@@ -1,6 +1,12 @@
-export const initialStore=()=>{
-  return{
-    message: null,
+export const initialStore = () => {
+  return {
+    cohorte: 'Fullstack Spain 128',
+    alert: {
+      text: '',
+      color: '',
+      display: false
+    },
+    message: 'HOla Mundo',
     todos: [
       {
         id: 1,
@@ -18,16 +24,15 @@ export const initialStore=()=>{
 
 export default function storeReducer(store, action = {}) {
   switch(action.type){
+
+    case 'handle_alert':
+      return { ...store, alert: action.payload};
+
     case 'set_hello':
-      return {
-        ...store,
-        message: action.payload
-      };
+      return { ...store, message: action.payload};
       
     case 'add_task':
-
       const { id,  color } = action.payload
-
       return {
         ...store,
         todos: store.todos.map((todo) => (todo.id === id ? { ...todo, background: color } : todo))
