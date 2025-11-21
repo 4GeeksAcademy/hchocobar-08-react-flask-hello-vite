@@ -11,6 +11,7 @@ import { SimpleCounter } from './pages/SimpleCounter.jsx'
 import { ExampleUseState } from './pages/ExampleUseState.jsx'
 import { ExampleFetch } from './pages/ExampleFetch.jsx'
 import { Login } from './pages/Login.jsx'
+import { Card } from "./pages/Card.jsx";
 
 export const router = createBrowserRouter(
     createRoutesFromElements(
@@ -29,6 +30,7 @@ export const router = createBrowserRouter(
         <Route path="/example-use-state" element={<ExampleUseState/>} />
         <Route path="/example-fetch" element={<ExampleFetch/>} />
         <Route path="/login" element={<Login/>} />
+        <Route path="/cards" element={<Card/>} />
       </Route>
     )
 );

@@ -1,10 +1,12 @@
 // 1. import
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 
 
 // 5 y 2
 export const Login = () => {
+  const { dispatch } = useGlobalReducer();
   const navigate = useNavigate()
   // 3. Code JS
   // 1.1 Generar un estado por cada input
@@ -35,6 +37,16 @@ export const Login = () => {
       handleReset()
       return
     }
+    // cambiar el valor del store.alert para dar la bienvenida
+    dispatch({
+      type: 'handle_alert',
+      payload: {
+        text: 'Bienvenido',
+        color: 'info',
+        display: true
+      }
+    })
+
     // enviar al jumbotron
     navigate('/jumbotron')
   }
@@ -43,6 +55,15 @@ export const Login = () => {
     setEmail('');
     setPassword('')
     setIAgree(false)
+    // suponemos un login no exitoso
+    dispatch({
+      type: 'handle_alert',
+      payload: {
+        text: 'email o contraseña errónea',
+        color: 'danger',
+        display: true
+      }
+    })
   }
 
 
