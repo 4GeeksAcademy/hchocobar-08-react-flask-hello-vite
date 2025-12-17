@@ -35,6 +35,16 @@ class Products(db.Model):
     description = db.Column(db.String(300), nullable=False)
     price = db.Column(db.Float, nullable=False)
 
+    def __repr__(self):
+        return f'<Product: {self.id} - {self.name}>'
+
+
+    def serialize(self):
+        return {'id': self.id,
+                'name': self.name,
+                'description': self.description,
+                'price': self.price}
+
 
 class Bills(db.Model):
     __tablename__ = 'bills'
