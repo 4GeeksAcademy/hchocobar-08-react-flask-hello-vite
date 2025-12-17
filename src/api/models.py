@@ -85,4 +85,12 @@ class Followers(db.Model):
 
     def __repr__(self):
         return f'following: {self.following_id} - follower: {self.follower_id}'
-    
+
+
+class Students(db.Model):
+    __tablename__ = 'students'
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    name = db.Column(db.String)
+    company = db.Column(db.String)
+    phone = db.Column(db.String)
