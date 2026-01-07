@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, Users, Products, Students
+from api.models import db, Users, Products, Students, Bills, BillItems
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 import requests
@@ -91,3 +91,39 @@ def students():
         response_body['results'] = data
         return response_body, 200
     return response_body, 400
+
+
+@api.route('/bills', methods=['GET', 'ṔOST'])
+def bills():
+    response_body = {}
+    if request.method == 'GET':
+        rows = db.session.execute(db.select(Bills)).scalars()
+        results = [row.serialize() for row in rows]
+        response_body['results'] = results
+        response_body['message'] = 'Listado de Facturas'
+        return response_body, 200
+    if request.method == 'POST':
+        data = request.json
+        # print(data)
+        # JSON con datos de las facturas y una lista de items detallados
+        """
+        row = Bills(total_price=data.get('total_price', 0),
+                    bill_address=data.get('bill_address', ''),
+                    delivery_address=data.get('delivery_address', ''),
+                    status='pending',
+                    payment_method=data.get('payment_method', 'visa'),
+                    user_id=data.get('user_id', 1))
+        db.session.add(row)
+        db.session.commit()
+        for item in data['items']:
+            item_row = BillItems(price_per_unit=item['price_per_unit'],
+                                 quantity=item['quantity'],
+                                 product_id=item['product_id'],
+                                 bill_id=row.id)
+            db.session.add(item_row)
+            db.session.commit()
+        # response_body['results'] = row.serialize()
+        response_body['message'] = 'Respondiendo desde el POST'
+        """
+        return response_body, 201
+    return response_body, 404
