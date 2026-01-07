@@ -59,6 +59,16 @@ class Bills(db.Model):
     user_to = db.relationship('Users', foreign_keys=[user_id],
                               backref=db.backref('bill_to', lazy='select'))
 
+    def serialize(self):
+        return {'id': self.id,
+                'created_at': self.created_at,
+                'total_price': self.total_price,
+                'bill_address': self.bill_address,
+                'delivery_address': self.delivery_address,
+                'status': self.status,
+                'payment_method': self.payment_method,
+                'items': [row.serialize() for row in self.bill_item_to]}
+
 
 class BillItems(db.Model):
     __tablename__ = 'bill_items'
@@ -71,6 +81,14 @@ class BillItems(db.Model):
     product_id = db.Column(db.Integer, db.ForeignKey('products.id'))
     product_to = db.relationship('Products', foreign_keys=[product_id],
                                  backref=db.backref('bill_item_to', lazy='select'))
+
+    def serialize(self):
+        return {'id': self.id,
+                'price_per_unit': self.price_per_unit,
+                'quantity': self.quantity,
+                'product_id': self.product_id,
+                'delivery_address': self.delivery_address,
+                'product_id': self.product_id}                                 
 
 
 class Followers(db.Model):
