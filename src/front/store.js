@@ -1,6 +1,6 @@
 export const initialStore = () => {
   return {
-    cohorte: 'Fullstack Spain 128',
+    cohorte: 'Spain 123',
     alert: {
       text: '',
       color: '',
@@ -18,12 +18,24 @@ export const initialStore = () => {
         title: "Do my homework",
         background: null,
       }
-    ]
+    ],
+    token: '',
+    current_user: {},
+    isLogged: false
   }
 }
 
 export default function storeReducer(store, action = {}) {
   switch(action.type){
+
+    case 'handle_isLogged':
+      return { ...store, isLogged: action.payload};
+
+    case 'handle_user':
+      return { ...store, current_user: action.payload};
+
+    case 'handle_token':
+      return { ...store, token: action.payload};
 
     case 'handle_alert':
       return { ...store, alert: action.payload};

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { protect } from "../services/auth.js";
 
 
 export const Jumbotron = () => {
@@ -11,6 +12,10 @@ export const Jumbotron = () => {
   //    3.- Guardar los datos en localStorage()
   // lo renderizando mapeando
   const [ users, setUsers ] = useState([])
+
+  const handle_whoiam = () => {
+    protect()
+  }
 
   const handleImageError = (event) => {
    event.target.src = 'https://starwars.chocobar.net/img/big-placeholder.jpg' 
@@ -45,6 +50,7 @@ export const Jumbotron = () => {
       <div className="position-relative p-5 text-center text-muted bg-body border border-dashed rounded-5">
         <Link to='/' type="button" className="position-absolute top-0 end-0 p-3 m-3 btn-close bg-secondary bg-opacity-10 rounded-pill" aria-label="Close"></Link>
         <h1 className="text-body-emphasis">Placeholder jumbotron</h1>
+          <span onClick={handle_whoiam} className="btn btn-primary">Who I am</span>
         <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-2">
           <div className="col" >
             <div className="card mb-3">
