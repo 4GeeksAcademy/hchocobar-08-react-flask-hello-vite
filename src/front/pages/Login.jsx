@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
+import { login } from '../services/auth.js';
 
 
 // 5 y 2
@@ -15,29 +16,31 @@ export const Login = () => {
   // 1.4 En la función que captura el onChange cambiar el valor del estado
   const [ email, setEmail ] = useState('');
   const [ password, setPassword ]  = useState('');
-  const [ iAgree, setIAgree ] = useState(false);
+  // const [ iAgree, setIAgree ] = useState(false);
 
   const handleEmail = (event) => {setEmail(event.target.value)}
   const handlePassword = (event) => {setPassword(event.target.value)}
-  const handleIAgree = (event) => {setIAgree(event.target.checked)}
+  // const handleIAgree = (event) => {setIAgree(event.target.checked)}
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    const dataToSend = {email, password, iAgree};
-    /* 
-    const dataToSend = {
-      email: email,
-      password: password,
-      iAgree: iAgree
-    } 
-    */
-    console.log(dataToSend)
-    const response = {ok: true}
-    if (!response.ok) {
+    const dataToSend = {email, password};
+    const result = await login(dataToSend)  // Hacer el login apuntando al back
+    if (!result) {
       handleReset()
       return
     }
-    // cambiar el valor del store.alert para dar la bienvenida
+    console.log('result:', result)
+    // 1. Guardar el token en el localStorage()
+    localStorage.setItem('token', result.access_token)
+    // 2. Guradar el token en el store (contexto)
+    dispatch({type: 'handle_token', payload: result.access_token})
+    // 3. Guardar los datos del usuario en el store (contexto) / opcional localStorage()
+    dispatch({type: 'handle_user', payload: result.results})
+    // 4. Setear en true el isLogged en el store
+    dispatch({type: 'handle_isLogged', payload: true})
+    
+    // 5. Cambiar el valor del store.alert para dar la bienvenida
     dispatch({
       type: 'handle_alert',
       payload: {
@@ -46,15 +49,14 @@ export const Login = () => {
         display: true
       }
     })
-
-    // enviar al jumbotron
+    // 6. Navegar al componente dashboard del usuario enviar (jumbotron)
     navigate('/jumbotron')
   }
 
   const handleReset = () => {
     setEmail('');
     setPassword('')
-    setIAgree(false)
+    // setIAgree(false)
     // suponemos un login no exitoso
     dispatch({
       type: 'handle_alert',
@@ -83,11 +85,13 @@ export const Login = () => {
             <input type="password" className="form-control" id="exampleInputPassword1"
                 value={password} onChange={handlePassword}/>
           </div>
+          {/* 
           <div className="mb-3 form-check">
             <input type="checkbox" className="form-check-input" id="exampleCheck1"
               checked={iAgree} onChange={handleIAgree}/>
-            <label className="form-check-label" htmlFor="exampleCheck1">Check me out</label>
+            <label className="form-check-label" htmlFor="exampleCheck1">Is Admin</label>
           </div>
+          */}
           <div>
             <button type="submit" className="btn btn-primary me-2">Submit</button>
             <button onClick={handleReset} type="reset" className="btn btn-secondary">Reset</button>

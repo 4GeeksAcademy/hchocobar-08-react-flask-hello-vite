@@ -1,6 +1,7 @@
 import React, { useEffect } from "react"
 import rigoImageUrl from "../assets/img/rigo-baby.jpg";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
+import { protect } from "../services/auth.js";
 
 export const Home = () => {
 
@@ -28,6 +29,10 @@ export const Home = () => {
 
 	}
 
+	const handle_whoiam = () => {
+    protect()
+  }
+
 	useEffect(() => {
 		loadMessage()
 	}, [])
@@ -38,6 +43,7 @@ export const Home = () => {
 			<p className="lead">
 				<img src={rigoImageUrl} className="img-fluid rounded-circle mb-3" alt="Rigo Baby" />
 			</p>
+          <span onClick={handle_whoiam} className="btn btn-primary">Who I am</span>
 			<div className="alert alert-info">
 				{store.message ? (
 					<span>{store.message}</span>

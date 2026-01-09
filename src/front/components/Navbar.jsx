@@ -10,23 +10,37 @@ export const Navbar = () => {
   const navigate = useNavigate();
 
   const handleLogin = () => {
-    // 1. que ponga el Alert en d-none 
-    dispatch({
-      type: 'handle_alert',
-      payload: {
-        text: '',
-        color: '',
-        display: false
-      }
-    })
-    // 2. que navegue al componente Login
-    navigate('/login')
+    if (store.isLogged) {
+      // Estoy logueado
+      // 1. Borrar el token en el localStorage()
+      localStorage.removeItem('token')
+      // 2. Borrar el token en el store (contexto)
+      dispatch({type: 'handle_token', payload: ''})
+      // 3. Borrar los datos del usuario en el store (contexto) / opcional localStorage()
+      dispatch({type: 'handle_user', payload: {}})
+      // 4. Setear en false el isLogged en el store
+      dispatch({type: 'handle_isLogged', payload: false})
+      navigate('/')
+    } else {
+      // Estoy deslogueado
+      // 1. que ponga el Alert en d-none 
+      dispatch({
+        type: 'handle_alert',
+        payload: {
+          text: '',
+          color: '',
+          display: false
+        }
+      })
+      // 2. que navegue al componente Login
+      navigate('/login')
+    }
 
   }
 
   // 3. Retornar un solo elemento HTML
   return (
-    <nav className="navbar navbar-expand-md bg-body-tertiary">
+    <nav className="navbar navbar-expand-sm bg-body-tertiary">
       <div className="container-fluid">
         <Link className="navbar-brand" to="/">{store.cohorte}</Link>
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,31 +51,34 @@ export const Navbar = () => {
             <li className="nav-item">
               <Link className="nav-link active" aria-current="page" to="/">Home</Link>
             </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/jumbotron">Jumbotron</Link>
-            </li>
-            <li className="nav-item dropdown">
-              <Link className="nav-link dropdown-toggle" to="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Proyectos
-              </Link>
-              <ul className="dropdown-menu">
-                <li><Link className="dropdown-item" to="/cards">Users</Link></li>
-                <li><Link className="dropdown-item" to="/todo-list">Todo List</Link></li>
-                <li><Link className="dropdown-item" to="/simple-counter">Simple Counter</Link></li>
-                <li><hr className="dropdown-divider"/></li>
-                <li><Link className="dropdown-item" to="/example-use-state">Example useState</Link></li>
-                <li><Link className="dropdown-item" to="/example-fetch">{'Example fetch() async/await'}</Link></li>
-              </ul>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link disabled" aria-disabled="true">Disabled</Link>
-            </li>
+            { store.isLogged ? 
+            <>
+              <li className="nav-item">
+                <Link className="nav-link" to="/jumbotron">Jumbotron</Link>
+              </li>
+
+              <li className="nav-item dropdown">
+                <Link className="nav-link dropdown-toggle" to="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Proyectos
+                </Link>
+                <ul className="dropdown-menu">
+                  <li><Link className="dropdown-item" to="/cards">Users</Link></li>
+                  <li><Link className="dropdown-item" to="/todo-list">Todo List</Link></li>
+                  <li><Link className="dropdown-item" to="/simple-counter">Simple Counter</Link></li>
+                  <li><hr className="dropdown-divider"/></li>
+                  <li><Link className="dropdown-item" to="/example-use-state">Example useState</Link></li>
+                  <li><Link className="dropdown-item" to="/example-fetch">{'Example fetch() async/await'}</Link></li>
+                </ul>
+              </li>
+            </>
+            : ''
+            }
           </ul>
           {/* 1. que navegue al componente Login
               2. que ponga el Alert en d-none 
               <Link className='btn btn-warning' to='/login'>Login</Link>
           */}
-          <span onClick={handleLogin} className='btn btn-warning'>Login</span>
+          <span onClick={handleLogin} className='btn btn-warning'>{store.isLogged ? 'Logout' : 'Login'}</span>
         </div>
       </div>
     </nav>
