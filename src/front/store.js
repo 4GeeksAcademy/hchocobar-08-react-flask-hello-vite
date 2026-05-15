@@ -12,7 +12,8 @@ export const initialStore=()=>{
         title: "Do my homework",
         background: null,
       }
-    ]
+    ],
+    cohorte: 'Spain AIE Part Time 01'
   }
 }
 
@@ -25,13 +26,14 @@ export default function storeReducer(store, action = {}) {
       };
       
     case 'add_task':
-
       const { id,  color } = action.payload
-
       return {
         ...store,
         todos: store.todos.map((todo) => (todo.id === id ? { ...todo, background: color } : todo))
       };
+    
+    case 'cambiar_cohorte':
+      return {...store, cohorte: action.payload}
     default:
       throw Error('Unknown action.');
   }    

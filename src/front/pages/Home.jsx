@@ -28,6 +28,18 @@ export const Home = () => {
 
 	}
 
+	const handleButton = () => {
+			let cohorte = 'Spain 2026'
+			dispatch({ type: "cambiar_cohorte", payload: cohorte });
+			localStorage.setItem('cohorte', cohorte)
+	}
+
+	const handleRemove = () => {
+		let cohorte = ''
+		dispatch({ type: 'cambiar_cohorte', payload: cohorte})
+		localStorage.removeItem('cohorte')
+	}
+
 	useEffect(() => {
 		loadMessage()
 	}, [])
@@ -35,6 +47,9 @@ export const Home = () => {
 	return (
 		<div className="text-center mt-5">
 			<h1 className="display-4">Hello Rigo!!</h1>
+			<button onClick={handleButton}>Cambiar cohorte</button>
+			<button onClick={handleRemove}>Borrar cohorte</button>
+
 			<p className="lead">
 				<img src={rigoImageUrl} className="img-fluid rounded-circle mb-3" alt="Rigo Baby" />
 			</p>
