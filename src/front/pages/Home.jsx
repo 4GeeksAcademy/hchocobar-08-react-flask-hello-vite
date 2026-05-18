@@ -49,7 +49,7 @@ export const Home = () => {
 			<h1 className="display-4">Hello Rigo!!</h1>
 			<button onClick={handleButton}>Cambiar cohorte</button>
 			<button onClick={handleRemove}>Borrar cohorte</button>
-
+			
 			<p className="lead">
 				<img src={rigoImageUrl} className="img-fluid rounded-circle mb-3" alt="Rigo Baby" />
 			</p>
